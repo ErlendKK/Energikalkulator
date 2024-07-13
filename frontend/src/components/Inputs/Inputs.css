@@ -1,0 +1,108 @@
+@import "bootstrap/dist/css/bootstrap.min.css";
+
+.input-group-text {
+  background-color: #d4d4d4;
+  color: #000;
+  border-radius: 0.25rem;
+  margin: 0;
+  padding: 0.1rem;
+}
+
+main,
+.input-container {
+  margin-top: 4rem;
+  margin-left: 3rem;
+}
+
+@media (max-width: 800px) {
+  main,
+  .input-container {
+    margin-left: 0 !important;
+  }
+}
+
+.card-body {
+  padding-bottom: 0.2rem;
+}
+
+.card-form-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 2.5rem;
+}
+
+.card-form-heading {
+  font-size: 1.5rem;
+}
+
+.btn-submit {
+  margin-bottom: 1rem;
+}
+
+.card-form-heading {
+  padding-top: 0.3rem;
+}
+
+.subcard-header {
+  height: 2.8rem;
+}
+
+.sub-card {
+  margin-bottom: 0.8rem;
+  margin-top: 0.2rem;
+}
+
+.table-divider {
+  width: 1px;
+  background-color: #000;
+}
+
+/* Dropdown table for normerte verdier */
+
+.custom-dropdown-menu {
+  min-width: 400px;
+  max-width: 900px;
+  padding: 0;
+}
+
+.custom-dropdown-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.dropdown-header,
+.dropdown-row {
+  display: flex;
+  width: 100%;
+  border-bottom: 1px solid #dee2e6;
+}
+
+.dropdown-header {
+  font-weight: bold;
+  background-color: #f8f9fa;
+}
+
+.value-column,
+.description-column {
+  padding: 0.2rem;
+  /* size: 8px, 8px, 8px, 8px; */
+  font-size: 12px;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  hyphens: auto;
+}
+
+.value-column {
+  width: 15%;
+  border-right: 1px solid #dee2e6;
+}
+
+.description-column {
+  width: 85%;
+}
+
+.dropdown-row:hover {
+  background-color: #f8f9fa;
+  cursor: pointer;
+}

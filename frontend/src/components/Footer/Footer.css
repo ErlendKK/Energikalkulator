@@ -1,0 +1,18 @@
+@import "../../index.css";
+
+.footer {
+  height: var(--footer-height); /* 7rem */
+  left: 0;
+  right: 0;
+  background-color: #f1f1f1;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: relative;
+  text-align: center;
+  bottom: 0;
+  padding: 0 1rem;
+  width: 100vw;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+

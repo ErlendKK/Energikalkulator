@@ -1,0 +1,25 @@
+{
+  "name": "energikalkulator",
+  "version": "1.0.0",
+  "description": "Energikalkulator for evaluering av bygg mot energikravi forskrift og standarder",
+  "main": "frontend/main.jsx",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ErlendKK/Energikalkulator.git"
+  },
+  "keywords": [
+    "energi",
+    "bygg",
+    "TEK",
+    "Taksonomi"
+  ],
+  "author": "ErlendKK",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ErlendKK/Energikalkulator/issues"
+  },
+  "homepage": "https://github.com/ErlendKK/Energikalkulator#readme"
+}

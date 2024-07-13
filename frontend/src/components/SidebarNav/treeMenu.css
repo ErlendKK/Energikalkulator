@@ -1,0 +1,41 @@
+@import "bootstrap/dist/css/bootstrap.min.css";
+
+/* Set the height of the sone-icon-buttons */
+.p-tree-toggler.p-link {
+  height: 22px !important;
+}
+
+/* Position the tree-menu horizontally */
+.p-tree-container {
+  left: 0;
+  padding-left: 5px;
+  padding-top: 5px;
+}
+
+/* Set the space between nodes */
+.p-treenode-droppoint {
+  height: 0.1rem;
+}
+
+/* Make the tree-menu spann the whole sidebar */
+.p-tree,
+div.card.flex.flex-column {
+  height: 100%;
+}
+
+/* Set the indentation per level in the hierarchy */
+.p-treenode-children {
+  padding-left: 18px;
+}
+
+/* Set the font-size of node-names */
+.p-treenode-content {
+  font-size: 0.75em;
+}
+
+/* Hide the menu for small screens */
+@media (max-width: 800px) {
+  div.card.flex.flex-column {
+    display: none !important;
+  }
+}
