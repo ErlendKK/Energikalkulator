@@ -1,3 +1,22 @@
+//Tabell A.4 - Standardverdier for normaliserte kuldebroverdier
+const kuldebroverdier = {
+  "Bygning med bæresystem i tre": {
+    description: "Bygning med bæresystem i tre",
+    value: "0.05",
+  },
+  "Bygning med bæresystem i betong, mur eller stål og 10 cm kuldebrobryter i fasadene": {
+    description:
+      "Bygning med bæresystem i betong, mur eller stål og 10 cm kuldebrobryter i fasadene",
+    value: "0.09",
+  },
+  "Bygning med bæresystem i betong, mur eller stål og 5 cm kuldebrobryter i fasadene": {
+    description:
+      "Bygning med bæresystem i betong, mur eller stål og 5 cm kuldebrobryter i fasadene",
+    value: "0.12",
+  },
+};
+
+// Tabell B.3 - Veiledende verdier for bygningers lekkasjetall ved 50 Pa, n50
 const lekkasjetall = {
   "Lekkasje for småhus i TEK 2007": {
     description:
@@ -21,7 +40,7 @@ const lekkasjetall = {
   "Anbefalt nivå for andre kategorier <=2 etasjer TEK 1987-1997": {
     description:
       "Anbefalt nivå for andre bygningskategorier inntil 2 etasjer i byggeforskrift av 1987 og 1997",
-    value: "1.5",
+    value: "3.0",
   },
   "Anbefalt nivå for andre kategorier >2 etasjer TEK 1987-1997": {
     description:
@@ -44,4 +63,4 @@ const lekkasjetall = {
   },
 };
 
-export default lekkasjetall;
+export { kuldebroverdier, lekkasjetall };

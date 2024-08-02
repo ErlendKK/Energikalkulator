@@ -42,7 +42,7 @@ const BygningsdelInput = () => {
   };
 
   return (
-    <div className="container mt-5">
+    <div className="container ">
       <div className="card">
         <form onSubmit={handleSubmit}>
           <div className="card-header card-form-header">

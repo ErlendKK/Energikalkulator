@@ -4,7 +4,8 @@
   "description": "Energikalkulator for evaluering av bygg mot energikravi forskrift og standarder",
   "main": "frontend/main.jsx",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "push": "git push origin main"
   },
   "repository": {
     "type": "git",

@@ -8,49 +8,8 @@
   padding: 0.1rem;
 }
 
-main,
-.input-container {
-  margin-top: 4rem;
-  margin-left: 3rem;
-}
-
-@media (max-width: 800px) {
-  main,
-  .input-container {
-    margin-left: 0 !important;
-  }
-}
-
-.card-body {
-  padding-bottom: 0.2rem;
-}
-
-.card-form-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  height: 2.5rem;
-}
-
-.card-form-heading {
-  font-size: 1.5rem;
-}
-
 .btn-submit {
   margin-bottom: 1rem;
-}
-
-.card-form-heading {
-  padding-top: 0.3rem;
-}
-
-.subcard-header {
-  height: 2.8rem;
-}
-
-.sub-card {
-  margin-bottom: 0.8rem;
-  margin-top: 0.2rem;
 }
 
 .table-divider {
@@ -58,12 +17,18 @@ main,
   background-color: #000;
 }
 
+.dropdown-menu {
+  max-height: 14rem;
+  overflow-y: scroll;
+  z-index: 12;
+}
+
 /* Dropdown table for normerte verdier */
 
 .custom-dropdown-menu {
-  min-width: 400px;
-  max-width: 900px;
-  padding: 0;
+  min-width: 370px !important;
+  max-width: 500px;
+  /* padding: 0; */
 }
 
 .custom-dropdown-table {
@@ -73,9 +38,10 @@ main,
 
 .dropdown-header,
 .dropdown-row {
-  display: flex;
+  display: flex !important;
   width: 100%;
   border-bottom: 1px solid #dee2e6;
+  padding: 0 !important;
 }
 
 .dropdown-header {
@@ -93,16 +59,32 @@ main,
   hyphens: auto;
 }
 
-.value-column {
+.value-column,
+.value-header {
   width: 15%;
   border-right: 1px solid #dee2e6;
 }
 
-.description-column {
+.description-column,
+.description-header {
   width: 85%;
 }
 
 .dropdown-row:hover {
   background-color: #f8f9fa;
   cursor: pointer;
+}
+
+/* Cards */
+.card-form-heading {
+  padding-top: 0.3rem;
+}
+
+.subcard-header {
+  height: 2.8rem;
+}
+
+.sub-card {
+  margin-bottom: 0.8rem;
+  margin-top: 0.2rem;
 }

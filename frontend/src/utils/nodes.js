@@ -69,3 +69,58 @@ export const isCopiedNodesSiblings = (copiedNodes) => {
   const depthOfFirstSelectedNode = copiedNodes[0].depth;
   return !copiedNodes.some((node) => node.depth !== depthOfFirstSelectedNode);
 };
+
+/**
+ * Get all nodekeys in the node hierarchy.
+ *
+ * @param {Object[]} nodes - The node hierarchy.
+ * @returns {number[]} - Array of all nodekeys
+ */
+export const getAllNodeKeys = (nodes) => {
+  let nodeKeys = [];
+  const queue = [...nodes];
+
+  while (queue.length) {
+    const currentNode = queue.shift();
+    nodeKeys.push(currentNode.key);
+
+    currentNode.children.forEach((child) => queue.push(child));
+  }
+
+  return nodeKeys;
+};
+
+/**
+ * Sorts nodes into categories based on their type.
+ *
+ * @param {Object[]} nodes - The array of nodes to sort.
+ * @returns {Object} - An object with arrays of nodes categorized by their type.
+ */
+export const sortNodesByType = (projectHierarchy) => {
+  const sortedNodes = {
+    sone: [],
+    fasade: [],
+    gulv: [],
+    tak: [],
+    vinduOgDør: [],
+    ventilasjon: [],
+    internlast: [],
+    skillekonstruksjon: [],
+  };
+
+  const findNodes = (nodes) => {
+    if (!nodes) return;
+    nodes.forEach((node) => {
+      if (sortedNodes[node.type]) {
+        sortedNodes[node.type].push(node);
+      }
+      if (node.children) {
+        findNodes(node.children);
+      }
+    });
+  };
+
+  findNodes(projectHierarchy.children);
+  console.log("sortedNodes: ", sortedNodes);
+  return sortedNodes;
+};

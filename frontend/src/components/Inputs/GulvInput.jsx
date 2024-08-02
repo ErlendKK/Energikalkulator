@@ -1,33 +1,51 @@
 import React, { useState, useEffect } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
-import { Dropdown, Table } from "react-bootstrap";
+import { Table } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import { nanoid } from "@reduxjs/toolkit";
+import { useNavigate } from "react-router-dom";
 
 import "./Inputs.css";
-import { add, update } from "../../features/projectSlice";
+import { addNode, updateNode } from "../../features/projectSlice";
+import { treeMenuConstants } from "../Toolbar/Toolbar";
+import { TableDropdown } from "../Forms";
+import { grunnforhold } from "../../data/grunnforhold";
+
+const DEFAULT_LABEL = "Nytt Gulv";
+const NODE_TYPE = "gulv";
+const LEGAL_PARENTS = ["sone"];
 
 const initialState = {
   navn: { value: "", documentation: "" },
   areal: { value: "", documentation: "" },
   uVerdi: { value: "", documentation: "" },
   omkrets: { value: "", documentation: "" },
+  grundForhold: { value: "Leire/slit", documentation: "" },
+  tykkelseGrunnmur: { value: "", documentation: "" },
 };
 
-const GulvInput = ({ node }) => {
+//TODO: nedtrekksmeny med grunnforhold
+
+const GulvInput = ({ activeExistingNode }) => {
   const [inputVerdier, setInputVerdier] = useState(structuredClone(initialState));
-  const dispatch = useDispatch();
   const { activeSoneId } = useSelector((state) => state.active.projectNodes);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   useEffect(() => {
-    if (node) {
-      // Prefill form with existing node data if an existing node is selected
-      setInputVerdier(node.data);
+    // console.log("activeProject", activeProject);
+    console.log("activeExistingNode: ", activeExistingNode);
+
+    if (activeExistingNode) {
+      // Prefill form with existing node data if an existing node is active
+      const preSetInputValues = structuredClone(activeExistingNode.data);
+      console.log("preSetInputValues: ", preSetInputValues);
+      setInputVerdier(preSetInputValues);
     } else {
       // Otherwise reset inputVerdier when node changes
       setInputVerdier(structuredClone(initialState));
     }
-  }, [node]);
+  }, [activeExistingNode]);
 
   /**
    * Handles input change events and updates the state accordingly.
@@ -64,10 +82,11 @@ const GulvInput = ({ node }) => {
    */
   const handleSubmit = (event) => {
     event.preventDefault();
-    console.log("Lagret verdier:", inputVerdier);
+    console.log("handleSubmit inputVerdier:", inputVerdier);
+    console.log("activeExistingNode: ", activeExistingNode);
 
-    if (node) {
-      updateExistingNode;
+    if (activeExistingNode) {
+      updateExistingNode();
     } else {
       addNewNode();
     }
@@ -75,11 +94,12 @@ const GulvInput = ({ node }) => {
 
   function updateExistingNode() {
     const updatedNode = {
-      ...node,
+      ...activeExistingNode,
       data: inputVerdier,
-      label: inputVerdier.navn.value || node.label,
+      label: inputVerdier.navn.value || activeExistingNode.label,
     };
-    dispatch(update(updatedNode));
+    console.log("updateExistingNode dispatches: ", updatedNode);
+    dispatch(updateNode(updatedNode));
   }
 
   /**
@@ -90,18 +110,18 @@ const GulvInput = ({ node }) => {
     const newNode = {
       key: nanoid(),
       depth: 2,
-      type: "gulv",
+      type: NODE_TYPE,
       data: inputVerdier,
-      label: inputVerdier.navn.value || "Nytt gulv",
-      icon: "pi pi-fw pi-stop",
+      label: inputVerdier.navn.value || DEFAULT_LABEL,
+      icon: treeMenuConstants[NODE_TYPE].icon,
       parent: activeSoneId,
       children: [],
     };
-    delete newNode.data.navn;
+
     console.log("newNode:", newNode);
-    dispatch(add({ targetKey: newNode.parent, nodesToAdd: [newNode] }));
+    dispatch(addNode({ targetKey: newNode.parent, nodesToAdd: [newNode] }));
     setInputVerdier(structuredClone(initialState));
-    // TODO: Route to new node after creation
+    navigate(`/project/node/${newNode.key}`);
   }
 
   // TODO: Hent normerte U-Verdier fra data
@@ -130,25 +150,37 @@ const GulvInput = ({ node }) => {
     },
   ];
 
+  // If no appropriate parent-node is selected; display a message
+  if (!activeSoneId) {
+    return (
+      <MissingParent
+        LEGAL_PARENTS={LEGAL_PARENTS}
+        DEFAULT_LABEL={DEFAULT_LABEL}
+        NODE_TYPE={NODE_TYPE}
+      />
+    );
+  }
+
+  // Otherwise display a table of input values
   return (
-    <div className="container mt-5">
+    <div className="container ">
       <div className="card">
         <form onSubmit={handleSubmit}>
           <div className="card-header card-form-header">
-            <h3 className="card-form-heading">{node ? "Rediger Gulv" : "Nytt Gulv"}</h3>
+            <h3 className="card-form-heading">{activeExistingNode?.label || DEFAULT_LABEL}</h3>
             <button type="submit" className="btn btn-sm btn-success btn-submit mt-3">
-              {node ? "Oppdater" : "Opprett"}
+              {activeExistingNode ? "Oppdater" : "Opprett"}
             </button>
           </div>
           <div className="card-body">
-            <Table bordered hover size="sm" responsive>
+            <Table bordered hover size="sm" responsive="md">
               <thead>
                 {/* Overskrifter */}
                 <tr>
                   <th></th>
                   <th>Verdi</th>
                   <th>Normert</th>
-                  <th>Dokumentatasjon</th>
+                  <th>Kommentar</th>
                 </tr>
               </thead>
               <tbody>
@@ -171,7 +203,17 @@ const GulvInput = ({ node }) => {
                     </td>
 
                     {/* Normerte verdier fra NS3031 */}
-                    <td className="col-1"></td>
+                    <td className="col-1">
+                      {Array.isArray(field.normertOptions) && (
+                        <TableDropdown
+                          field={field}
+                          index={index}
+                          openDropdown={openDropdown}
+                          setOpenDropdown={setOpenDropdown}
+                          handleInputChange={handleInputChange}
+                        />
+                      )}
+                    </td>
 
                     {/* Dokumentasjon */}
                     <td className="col-4">

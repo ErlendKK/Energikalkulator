@@ -2,11 +2,13 @@ import { Tooltip, OverlayTrigger } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { Row, Col } from "react-bootstrap";
 
 import { setActiveInputForm } from "../../features/activeSlice";
 import "./Toolbar.css";
+import "../../index.css";
 
-const treeMenuConstants = {
+export const treeMenuConstants = {
   sone: { depth: 1, icon: "pi pi-fw pi-box", tooltip: "Sone" },
   energiforsyning: { depth: 2, icon: "pi pi-fw pi-bolt", tooltip: "Energiforsyning" },
   internlaster: { depth: 2, icon: "pi pi-fw pi-cog", tooltip: "Internlaster" },
@@ -33,23 +35,27 @@ const Toolbar = () => {
   };
 
   return (
-    <div className="node-menu">
-      {Object.entries(treeMenuConstants).map(([key, item], index) => (
-        <OverlayTrigger
-          key={index}
-          placement="bottom"
-          overlay={
-            <Tooltip id={`tooltip-${index}`} style={{ position: "fixed" }}>
-              {item.tooltip}
-            </Tooltip>
-          }
-        >
-          <button type="button" className="icon-button" onClick={() => handleClick(key)}>
-            <i className={item.icon}></i>
-          </button>
-        </OverlayTrigger>
-      ))}
-    </div>
+    <Row className="container" id="toolbar-container">
+      <Col md={12} className="mb-3 mb-md-0">
+        <div className="node-menu ">
+          {Object.entries(treeMenuConstants).map(([key, item], index) => (
+            <OverlayTrigger
+              key={index}
+              placement="bottom"
+              overlay={
+                <Tooltip id={`tooltip-${index}`} style={{ position: "fixed" }}>
+                  {item.tooltip}
+                </Tooltip>
+              }
+            >
+              <button type="button" className="icon-button" onClick={() => handleClick(key)}>
+                <i className={item.icon}></i>
+              </button>
+            </OverlayTrigger>
+          ))}
+        </div>
+      </Col>
+    </Row>
   );
 };
 

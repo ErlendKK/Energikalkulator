@@ -90,14 +90,12 @@ const EnergiInput = () => {
       children: [null],
     };
 
-    delete newSone.data.soneNavn;
     console.log("newSone:", newSone);
-
-    dispatch(add({ targetKey: activeSone, nodesToAdd: [newSone] }));
+    dispatch(addNode({ targetKey: activeSone, nodesToAdd: [newSone] }));
   };
 
   return (
-    <div className="container mt-5">
+    <div className="container ">
       <div className="card">
         <form onSubmit={handleSubmit}>
           <div className="card-header card-form-header">

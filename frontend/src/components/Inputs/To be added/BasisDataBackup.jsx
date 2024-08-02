@@ -5,7 +5,7 @@
 // const SoneInput = () => {
 //   const [basisVerdier, setBasisVerdier] = useState({
 //     bygningskategori: { value: "", documentation: "" },
-//     oppvarmetBruksareal: { value: "", documentation: "" },
+//     oppvarmetBRA: { value: "", documentation: "" },
 //     takhoyde: { value: "", documentation: "" },
 //     kuldebroverdi: { value: "", documentation: "" },
 //     varmekapasitet: { value: "", documentation: "" },
@@ -35,7 +35,7 @@
 //   }
 
 //   const fields = [
-//     { id: "oppvarmetBruksareal", label: "Oppvarmet Bruksareal" },
+//     { id: "oppvarmetBRA", label: "Oppvarmet Bruksareal" },
 //     { id: "takhoyde", label: "Gjennomsnitlig Takhøyde" },
 //     { id: "kuldebroverdi", label: "Normalisert Kuldebroverdi" },
 //     { id: "varmekapasitet", label: "Normalisert Varmekapasitet" },
@@ -44,7 +44,7 @@
 
 //   // TODO: Mulighet for å legge inn/ redigere navn.
 //   return (
-//     <div className="container mt-5">
+//     <div className="container ">
 //       <div className="card">
 //         <form onSubmit={handleSubmit}>
 //           <div className="card-header card-form-header">

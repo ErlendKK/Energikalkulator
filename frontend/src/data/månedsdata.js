@@ -1,87 +1,105 @@
-const vaerData = [
+const månedsdata = [
   {
-    måned: "Januar",
+    navn: "Januar",
     temperatur: -3.7,
     relativLuftfuktighet: 88.2,
     vindhastighet: 1.8,
+    timer: 744,
+    dager: 31,
   },
   {
-    måned: "Februar",
+    navn: "Februar",
     temperatur: -4.8,
     relativLuftfuktighet: 85.9,
     vindhastighet: 1.5,
+    timer: 672,
+    dager: 28, // No leap years
   },
   {
-    måned: "Mars",
+    navn: "Mars",
     temperatur: -0.5,
     relativLuftfuktighet: 77.4,
     vindhastighet: 1.8,
+    timer: 744,
+    dager: 31,
   },
   {
-    måned: "April",
+    navn: "April",
     temperatur: 4.8,
     relativLuftfuktighet: 64.6,
     vindhastighet: 2.6,
+    timer: 720,
+    dager: 30,
   },
   {
-    måned: "Mai",
+    navn: "Mai",
     temperatur: 11.7,
     relativLuftfuktighet: 58.6,
     vindhastighet: 2.6,
+    timer: 744,
+    dager: 31,
   },
   {
-    måned: "Juni",
+    navn: "Juni",
     temperatur: 16.5,
     relativLuftfuktighet: 57.8,
     vindhastighet: 2.6,
+    timer: 720,
+    dager: 30,
   },
   {
-    måned: "Juli",
+    navn: "Juli",
     temperatur: 17.5,
     relativLuftfuktighet: 63.0,
     vindhastighet: 2.3,
+    timer: 744,
+    dager: 31,
   },
   {
-    måned: "August",
+    navn: "August",
     temperatur: 16.6,
     relativLuftfuktighet: 64.6,
     vindhastighet: 2.6,
+    timer: 744,
+    dager: 31,
   },
   {
-    måned: "September",
+    navn: "September",
     temperatur: 11.5,
     relativLuftfuktighet: 69.7,
     vindhastighet: 2.7,
+    timer: 720,
+    dager: 30,
   },
   {
-    måned: "Oktober",
+    navn: "Oktober",
     temperatur: 6.4,
     relativLuftfuktighet: 77.5,
     vindhastighet: 2.2,
+    timer: 744,
+    dager: 31,
   },
   {
-    måned: "November",
+    navn: "November",
     temperatur: 0.6,
     relativLuftfuktighet: 82.7,
     vindhastighet: 2.0,
+    timer: 720,
+    dager: 30,
   },
   {
-    måned: "Desember",
+    navn: "Desember",
     temperatur: -2.5,
     relativLuftfuktighet: 85.0,
     vindhastighet: 1.9,
-  },
-  {
-    måned: "År",
-    temperatur: 6.3,
-    relativLuftfuktighet: 72.8,
-    vindhastighet: 2.2,
+    timer: 744,
+    dager: 31,
   },
 ];
 
-const innstraaling = [
+const strålingsflukser = [
   {
-    orient: "S",
+    orientering: "S",
     helning: "90°",
     Januar: 28,
     Februar: 61,
@@ -97,7 +115,7 @@ const innstraaling = [
     Desember: 28,
   },
   {
-    orient: "Ø/V",
+    orientering: "Ø/V",
     helning: "90°",
     Januar: 11,
     Februar: 32,
@@ -113,7 +131,7 @@ const innstraaling = [
     Desember: 9,
   },
   {
-    orient: "N",
+    orientering: "N",
     helning: "90°",
     Januar: 6,
     Februar: 17,
@@ -129,7 +147,7 @@ const innstraaling = [
     Desember: 3,
   },
   {
-    orient: "S",
+    orientering: "S",
     helning: "60°",
     Januar: 28,
     Februar: 67,
@@ -145,7 +163,7 @@ const innstraaling = [
     Desember: 27,
   },
   {
-    orient: "Ø/V",
+    orientering: "Ø/V",
     helning: "60°",
     Januar: 13,
     Februar: 39,
@@ -161,7 +179,7 @@ const innstraaling = [
     Desember: 5,
   },
   {
-    orient: "N",
+    orientering: "N",
     helning: "60°",
     Januar: 8,
     Februar: 23,
@@ -177,7 +195,7 @@ const innstraaling = [
     Desember: 4,
   },
   {
-    orient: "S",
+    orientering: "S",
     helning: "30°",
     Januar: 21,
     Februar: 56,
@@ -193,7 +211,7 @@ const innstraaling = [
     Desember: 19,
   },
   {
-    orient: "Ø/V",
+    orientering: "Ø/V",
     helning: "30°",
     Januar: 12,
     Februar: 37,
@@ -209,7 +227,7 @@ const innstraaling = [
     Desember: 9,
   },
   {
-    orient: "N",
+    orientering: "N",
     helning: "30°",
     Januar: 8,
     Februar: 23,
@@ -225,7 +243,7 @@ const innstraaling = [
     Desember: 4,
   },
   {
-    orient: "0°",
+    orientering: "0°",
     helning: "0°",
     Januar: 13,
     Februar: 43,
@@ -242,4 +260,4 @@ const innstraaling = [
   },
 ];
 
-export { vaerData, innstraaling };
+export { månedsdata, strålingsflukser };

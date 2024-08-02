@@ -1,12 +1,20 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { Table } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import { nanoid } from "@reduxjs/toolkit";
-import { useParams } from "react-router-dom";
+import { useNavigate, useLocation, useBlocker } from "react-router-dom";
 
 import "./Inputs.css";
-import { add } from "../../features/projectSlice";
+import "../../index.css";
+import { addNode, updateNode } from "../../features/projectSlice";
+import { treeMenuConstants } from "../Toolbar/Toolbar";
+import { TableDropdown } from "../Forms";
+import MissingParent from "./MissingParent";
+
+const DEFAULT_LABEL = "Ny Fasade";
+const NODE_TYPE = "fasade";
+const LEGAL_PARENTS = ["sone"];
 
 const initialState = {
   navn: { value: "", documentation: "" },
@@ -15,16 +23,62 @@ const initialState = {
   himmelretning: { value: "", documentation: "" },
 };
 
-const FasadeInput = () => {
+const FasadeInput = ({ activeExistingNode }) => {
   const [inputVerdier, setInputVerdier] = useState(structuredClone(initialState));
-  const dispatch = useDispatch();
+  const [isDirty, setIsDirty] = useState(false);
   const { activeSoneId } = useSelector((state) => state.active.projectNodes);
-  const { soneID } = useParams();
+  const dispatch = useDispatch();
+
+  const navigate = useNavigate();
+  const blocker = useBlocker(
+    useCallback(
+      ({ currentLocation, nextLocation }) =>
+        isDirty && currentLocation.pathname !== nextLocation.pathname,
+      [isDirty]
+    )
+  );
 
   useEffect(() => {
-    // Reset inputVerdier when activeSoneId changes
-    setInputVerdier(structuredClone(initialState));
-  }, [activeSoneId]);
+    if (blocker.state === "blocked") {
+      const userChoice = window.confirm(
+        "You have unsaved changes. Are you sure you want to leave?"
+      );
+      if (userChoice) {
+        setIsDirty(false);
+        blocker.proceed();
+      } else {
+        blocker.reset();
+      }
+    }
+  }, [blocker]);
+
+  const handleBeforeUnload = useCallback(
+    (event) => {
+      if (isDirty) {
+        event.preventDefault();
+        event.returnValue = "";
+      }
+    },
+    [isDirty]
+  );
+
+  useEffect(() => {
+    window.addEventListener("beforeunload", handleBeforeUnload);
+    return () => {
+      window.removeEventListener("beforeunload", handleBeforeUnload);
+    };
+  }, [handleBeforeUnload]);
+
+  useEffect(() => {
+    // Prefill form with existing node data if an existing node is active
+    // Otherwise reset inputVerdier when node changes
+    if (activeExistingNode) {
+      const preSetInputValues = structuredClone(activeExistingNode.data);
+      setInputVerdier(preSetInputValues);
+    } else {
+      setInputVerdier(structuredClone(initialState));
+    }
+  }, [activeExistingNode]);
 
   /**
    * Handles input change events and updates the state accordingly.
@@ -54,34 +108,60 @@ const FasadeInput = () => {
         [type]: value,
       },
     }));
+    setIsDirty(true);
   };
 
   /**
-   * Handles the form submission and dispatches the new node.
+   * Handles the form submission and dispatches the new or updated node.
    * @param {React.FormEvent} event - The form submit-event.
    */
   const handleSubmit = (event) => {
     event.preventDefault();
-    console.log("Lagret verdier:", inputVerdier);
-    console.log("activeSoneId:", activeSoneId);
+    console.log("handleSubmit inputVerdier:", inputVerdier);
+    console.log("activeExistingNode: ", activeExistingNode);
 
+    if (activeExistingNode) {
+      updateExistingNode();
+    } else {
+      addNewNode();
+    }
+    setIsDirty(false);
+  };
+
+  function updateExistingNode() {
+    const updatedNode = {
+      ...activeExistingNode,
+      data: inputVerdier,
+      label: inputVerdier.navn.value || activeExistingNode.label,
+    };
+    console.log("updateExistingNode dispatches: ", updatedNode);
+    dispatch(updateNode(updatedNode));
+  }
+
+  /**
+   * Adds a new node to the active sone.
+   * Resets the input values to the initial state.
+   */
+  function addNewNode() {
     const newNode = {
       key: nanoid(),
       depth: 2,
-      type: "fasade",
+      type: NODE_TYPE,
       data: inputVerdier,
-      label: inputVerdier.navn.value || "Ny fasade",
-      icon: "pi pi-fw pi-home",
+      label: inputVerdier.navn.value || DEFAULT_LABEL,
+      icon: treeMenuConstants[NODE_TYPE].icon,
       parent: activeSoneId,
       children: [],
     };
 
-    delete newNode.data.navn;
-    console.log("newNode:", newNode);
+    // TODO: Add className p-highlight og data-p-highlight="true" på den nye noden i
+    // Hierarkiet, og fjern dette for alle andre noder.
 
-    dispatch(add({ targetKey: newNode.parent, nodesToAdd: [newNode] }));
+    console.log("newNode:", newNode);
+    dispatch(addNode({ targetKey: newNode.parent, nodesToAdd: [newNode] }));
     setInputVerdier(structuredClone(initialState));
-  };
+    navigate(`/project/node/${newNode.key}`);
+  }
 
   // TODO: Hent normerte U-Verdier fra data
   const fields = [
@@ -107,25 +187,37 @@ const FasadeInput = () => {
     },
   ];
 
+  // If no appropriate parent-node is selected; display a message
+  if (!activeSoneId) {
+    return (
+      <MissingParent
+        LEGAL_PARENTS={LEGAL_PARENTS}
+        DEFAULT_LABEL={DEFAULT_LABEL}
+        NODE_TYPE={NODE_TYPE}
+      />
+    );
+  }
+
+  // Otherwise display a table of input values
   return (
-    <div className="container mt-5">
+    <div className="container ">
       <div className="card">
         <form onSubmit={handleSubmit}>
           <div className="card-header card-form-header">
-            <h3 className="card-form-heading">Ny Fasade</h3>
+            <h3 className="card-form-heading">{activeExistingNode?.label || DEFAULT_LABEL}</h3>
             <button type="submit" className="btn btn-sm btn-success btn-submit mt-3">
               Lagre
             </button>
           </div>
           <div className="card-body">
-            <Table bordered hover size="sm" responsive>
+            <Table bordered hover size="sm" responsive="md">
               <thead>
                 {/* Overskrifter */}
                 <tr>
                   <th></th>
                   <th>Verdi</th>
                   <th>Normert</th>
-                  <th>Dokumentatasjon</th>
+                  <th>Kommentar</th>
                 </tr>
               </thead>
               <tbody>
@@ -146,8 +238,18 @@ const FasadeInput = () => {
                       />
                     </td>
 
-                    {/*TODO: Implement Normerte verdier fra NS3031 */}
-                    <td className="col-1"></td>
+                    {/*Normerte verdier fra NS3031 */}
+                    <td className="col-1">
+                      {Array.isArray(field.normertOptions) && (
+                        <TableDropdown
+                          field={field}
+                          index={index}
+                          openDropdown={openDropdown}
+                          setOpenDropdown={setOpenDropdown}
+                          handleInputChange={handleInputChange}
+                        />
+                      )}
+                    </td>
 
                     {/* Dokumentasjon */}
                     <td className="col-4">

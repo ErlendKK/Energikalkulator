@@ -12,7 +12,6 @@
   text-align: center;
   bottom: 0;
   padding: 0 1rem;
-  width: 100vw;
+  width: 100%;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
-

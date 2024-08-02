@@ -5,7 +5,7 @@
 * Implement route-paths for all inputs
 * Implement log-in and registration pages
 * Implement home page
-* Implement color-scheem
+* Implement color-scheema
 * Implemnt results-page
 * Sidebar-tree: Enable drag-drop of multiple nodes.
 

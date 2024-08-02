@@ -4,7 +4,7 @@ import { findNodeFromKey } from "../utils/nodes";
 
 const initialState = {
   projectNodes: {
-    activeProjectId: "",
+    activeProjectId: "0",
     activeSoneId: "",
     activeFasadeId: "",
     activeTakId: "",

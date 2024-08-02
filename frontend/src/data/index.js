@@ -1,8 +1,8 @@
 import bygningskategorier from "./bygningskategorier";
-import energikilder from "./energikilder";
-import kuldebroverdier from "./kuldebroverdier";
-import lekkasjetall from "./lekkasjetall";
-import vaerdata from "./vaerdata";
+import energikilder from "./energi";
+import kuldebroverdier from "./bygningskropp";
+import lekkasjetall from "./bygningskropp";
+import månedsdata from "./månedsdata";
 import varmekapasiteter from "./varmekapasiteter";
 
 export {
@@ -10,6 +10,6 @@ export {
   energikilder,
   kuldebroverdier,
   lekkasjetall,
-  vaerdata,
+  månedsdata,
   varmekapasiteter,
 };

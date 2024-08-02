@@ -99,4 +99,45 @@ const energikilder = [
   },
 ];
 
+const veiledendeSpesifikkPumpeeffekt = {
+  Varmeanlegg: 0.5,
+  "Kjøle-/isvannsanlegg": 0.6,
+  Tørrkjølerkrets: 0.6,
+};
+
+const veiledendeDeltaTempTurReturPumper = {
+  oppvarming: [
+    {
+      type: "Radiatorsystemer og konvektorer",
+      deltaT: 20,
+    },
+    {
+      type: "Varmetak/varmepanel, varmestrips, kombibafler",
+      deltaT: 10,
+    },
+    {
+      type: "Varmebatterier i ventilasjonsaggregater",
+      deltaT: 30,
+    },
+    {
+      type: "Gulvvarme",
+      deltaT: 6,
+    },
+  ],
+  kjoling: [
+    {
+      type: "Konvektorer",
+      deltaT: 2.5,
+    },
+    {
+      type: "Kjøletak/kjølepanel, kjølebafler, tilluftsbafler/kombibafler",
+      deltaT: 4,
+    },
+    {
+      type: "Kjølebatterier i ventilasjonsaggregater",
+      deltaT: 6,
+    },
+  ],
+};
+
 export default energikilder;

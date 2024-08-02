@@ -1,40 +1,85 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Tree } from "primereact/tree";
-import { cloneDeep } from "lodash";
 import { useSelector, useDispatch } from "react-redux";
 import { nanoid } from "@reduxjs/toolkit";
+import { useNavigate } from "react-router-dom";
 
-import { deleteNode, add } from "../../features/projectSlice";
+import { deleteNode, addNode, updateNode } from "../../features/projectSlice";
 import { setActiveNodeId } from "../../features/activeSlice";
-import { findNodeFromKey, findNodeListByKey, isCopiedNodesSiblings } from "../../utils/nodes";
+import {
+  findNodeFromKey,
+  findNodeListByKey,
+  isCopiedNodesSiblings,
+  getAllNodeKeys,
+} from "../../utils/nodes";
 import "./treeMenu.css";
+
+const resultatNode = {
+  key: "Resultater",
+  label: "Resultater",
+  icon: "pi pi-fw pi-chart-bar",
+  children: [],
+};
 
 export default function TreeMenu() {
   const dispatch = useDispatch();
   const projectNodes = useSelector((store) => store.project);
+  const navigate = useNavigate();
+
   const [selectedKeys, setSelectedKeys] = useState(null);
   const [clipboard, setClipboard] = useState(null);
   const [trashBin, setTrashBin] = useState([]);
+  const [nodes, setNodes] = useState([projectNodes]);
 
-  let nodes = [projectNodes];
   useEffect(() => {
-    nodes = [projectNodes];
+    setNodes((prevNodes) => {
+      if (getAllNodeKeys(prevNodes).length === getAllNodeKeys([projectNodes]).length - 1) {
+        handleStylingWhenNodeAdded(prevNodes, [projectNodes]);
+      }
+
+      return [projectNodes, resultatNode];
+    });
   }, [projectNodes]);
 
+  const handleStylingWhenNodeAdded = (prevNodes, newNodes) => {
+    // Remove hightling from currently highligthed nodes
+    const highlightedNodes = document.querySelectorAll(
+      ".p-treenode-content.p-treenode-selectable.p-highlight"
+    );
+    highlightedNodes.forEach((node) => node.classList.remove("p-highlight"));
+    //TODO: find out how to highlight the added node
+    // // Find and highlight the added node
+    // const prevNodesKeys = getAllNodeKeys(prevNodes);
+    // const newNodesKeys = getAllNodeKeys(newNodes);
+    // const addedNodeKey = newNodesKeys.filter((element) => !prevNodesKeys.includes(element))[0];
+    // const addedNode = findNodeFromKey(newNodes, addedNodeKey);
+    // // Create a deep clone without the className and update Nodes
+    // const nodeCopy = structuredClone(addedNode);
+    // nodeCopy.className = "";
+    // console.log("nodeCopy: ", nodeCopy);
+    // dispatch(updateNode(nodeCopy));
+  };
+
   /**
-   * Handle selection change in the tree, set the active node and update the selected keys
+   * Handle selection change in the tree, set the active node and updateNode the selected keys
    * @param {Object} e - The selection change event
    */
   const handleSelectionChange = (e) => {
     console.log("e.value: ", e.value);
     const selectedKeys = Object.keys(e.value);
     const lastSelectedKey = selectedKeys[selectedKeys.length - 1];
+
+    if (lastSelectedKey === "Resultater") {
+      setSelectedKeys(null);
+      navigate("results");
+      return;
+    }
+
     const activatedNode = findNodeFromKey(nodes, lastSelectedKey);
-    console.log("activatedNode: ", activatedNode);
-    console.log("nodes: ", nodes);
 
     dispatch(setActiveNodeId({ node: activatedNode, projectHierarchy: nodes }));
     setSelectedKeys(e.value);
+    navigate(`/project/node/${lastSelectedKey}`);
   };
 
   /**
@@ -45,7 +90,7 @@ export default function TreeMenu() {
     if (!selectedKeys) return;
 
     // Make deep copies to avoid passing nested objects by reference
-    const copiedNodes = findNodeListByKey(nodes, selectedKeys).map((node) => cloneDeep(node));
+    const copiedNodes = findNodeListByKey(nodes, selectedKeys).map((node) => structuredClone(node));
     if (!isCopiedNodesSiblings(copiedNodes)) return;
 
     setClipboard(copiedNodes);
@@ -70,7 +115,7 @@ export default function TreeMenu() {
 
       // nodesToAdd = array of deep copies of the copied nodes
       const nodesToAdd = clipboard.map((node) => {
-        const newNode = cloneDeep(node);
+        const newNode = structuredClone(node);
         newNode.key = nanoid();
         newNode.parent = targetNode.key;
         return newNode;
@@ -78,12 +123,12 @@ export default function TreeMenu() {
 
       // Paste to the the target node
       if (targetNode.depth === depthOfCopiedNodes - 1) {
-        dispatch(add({ targetKey: targetNode.key, nodesToAdd }));
+        dispatch(addNode({ targetKey: targetNode.key, nodesToAdd }));
       }
 
       // Paste to the parent of the target node
       if (targetNode.depth === depthOfCopiedNodes && targetNode.parent) {
-        dispatch(add({ targetKey: targetNode.parent.key, nodesToAdd }));
+        dispatch(addNode({ targetKey: targetNode.parent.key, nodesToAdd }));
       }
     });
   };
@@ -150,7 +195,7 @@ export default function TreeMenu() {
       const deletePayload = { [event.dragNode.key]: true };
 
       dispatch(deleteNode(deletePayload));
-      dispatch(add(pastePayload));
+      dispatch(addNode(pastePayload));
 
       // If the dragged node is a sibling of the target node; move the node to the parent of the target
     } else if (event.dragNode.depth === event.dropNode.depth) {
@@ -163,7 +208,7 @@ export default function TreeMenu() {
       const deletePayload = { [event.dragNode.key]: true };
 
       dispatch(deleteNode(deletePayload));
-      dispatch(add(pastePayload));
+      dispatch(addNode(pastePayload));
     } else {
       console.log("Invalid move");
     }
@@ -177,9 +222,12 @@ export default function TreeMenu() {
         selectionMode="multiple"
         selectionKeys={selectedKeys}
         onSelectionChange={handleSelectionChange}
-        className="w-full md:w-16rem"
+        className="w-full"
         dragdropScope="dd"
         onDragDrop={handleDropDrag}
+        filter
+        filterMode="lenient"
+        filterPlaceholder="Søk"
       />
     </div>
   );

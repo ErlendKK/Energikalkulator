@@ -1,0 +1,83 @@
+@import "bootstrap/dist/css/bootstrap.min.css";
+
+/* Set the height of the sone-icon-buttons */
+.p-tree-toggler.p-link {
+  height: 22px !important;
+}
+
+/* Position the tree-menu horizontally */
+.p-tree-container {
+  left: 0;
+  padding-left: 0px;
+  padding-top: 0.35rem;
+}
+
+/* Set the space between nodes */
+.p-treenode-droppoint {
+  height: 0.1rem;
+}
+
+/* Make the tree-menu spann the whole sidebar */
+.p-tree,
+div.card.flex.flex-column {
+  height: 100%;
+}
+
+.card.flex.flex-column {
+  border-radius: 0;
+}
+
+/* Set the indentation per level in the hierarchy */
+.p-treenode-children {
+  padding-left: 0.6rem;
+}
+
+/* Set the font-size of node-names */
+.p-treenode-content {
+  font-size: 0.75rem;
+}
+
+/* Style and position the searchbar */
+.p-tree-filter-container {
+  margin: auto;
+  padding-top: 0.35rem;
+  padding-left: 0.6rem;
+  padding-right: 0.4rem;
+}
+
+/* Remove the search icon from searchbar */
+.p-icon.p-tree-filter-icon {
+  display: none;
+}
+
+.p-tree-filter.p-inputtext.p-component {
+  padding-left: 0.3rem;
+  font-size: 0.9rem;
+  height: 1.6rem;
+}
+
+@media screen and (max-width: 600px) {
+  .p-tree-container {
+    padding-left: 1px;
+  }
+  .p-treenode-children {
+    padding-left: 0;
+  }
+  .p-treenode-content {
+    font-size: 0;
+  }
+  .p-tree-toggler-icon {
+    display: none;
+  }
+  .p-tree-toggler.p-link {
+    width: 0;
+  }
+  .p-tree-filter-container {
+    padding-left: 0.1rem;
+    padding-right: 0.1rem;
+  }
+  .p-tree-filter.p-inputtext.p-component {
+    padding-left: 0.05rem;
+    font-size: 0.7rem;
+  }
+}

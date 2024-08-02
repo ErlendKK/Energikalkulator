@@ -1,13 +1,18 @@
 import React, { useState, useEffect } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
-import { Dropdown, Table } from "react-bootstrap";
+import { Dropdown, Table, Form } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import { nanoid } from "@reduxjs/toolkit";
-import { useParams } from "react-router-dom";
+import { TableDropdown } from "../Forms";
 
 import "./Inputs.css";
-import { add, selectNodeByKey } from "../../features/projectSlice";
+import { addNode, selectNodeByKey } from "../../features/projectSlice";
 import bygningskategorier from "../../data/bygningskategorier";
+import { treeMenuConstants } from "../Toolbar/Toolbar";
+
+const DEFAULT_LABEL = "Nytt Prosjekt";
+const NODE_TYPE = "prosjekt";
+const LEGAL_PARENTS = [null];
 
 const initialState = {
   navn: { value: "", documentation: "" },
@@ -18,19 +23,31 @@ const initialState = {
  * SoneInput component for submitting new sone-nodes.
  * @component
  */
-const ProjectInput = () => {
+const ProjectInput = ({ activeExistingNode }) => {
   const [inputVerdier, setInputVerdier] = useState(structuredClone(initialState));
   const [openDropdown, setOpenDropdown] = useState(null);
   const { activeProjectId } = useSelector((state) => state.active.projectNodes);
+  const { projectNode } = useSelector((state) => state.project);
+
   const dispatch = useDispatch();
 
   // TODO: Update this temporary solution - get from store => route-params
   const activeProject = useSelector((state) => selectNodeByKey(state, activeProjectId));
 
   useEffect(() => {
-    // Reset inputVerdier when activeProjectId changes
-    setInputVerdier(structuredClone(initialState));
-  }, [activeProjectId]);
+    console.log("activeProject", activeProject);
+    console.log("node: ", activeExistingNode);
+
+    if (activeExistingNode) {
+      // Prefill form with existing node data if an existing node is selected
+      const preSetInputValues = structuredClone(activeExistingNode.data);
+      console.log("preSetInputValues: ", preSetInputValues);
+      setInputVerdier(preSetInputValues);
+    } else {
+      // Otherwise reset inputVerdier when node changes
+      setInputVerdier(structuredClone(initialState));
+    }
+  }, [activeExistingNode]);
 
   /**
    * Handles input change events and updates the state accordingly.
@@ -67,9 +84,9 @@ const ProjectInput = () => {
    * Toggles the visibility of the dropdown menu.
    * @param {string} dropdownId - The dropdown identifier.
    */
-  const toggleDropdown = (dropdownId) => {
-    setOpenDropdown(openDropdown === dropdownId ? null : dropdownId);
-  };
+  // const toggleDropdown = (dropdownId) => {
+  //   setOpenDropdown(openDropdown === dropdownId ? null : dropdownId);
+  // };
 
   /**
    * Handles the form submission and dispatches the new node.
@@ -82,18 +99,16 @@ const ProjectInput = () => {
     const newSone = {
       key: nanoid(),
       depth: 1,
-      type: "sone",
+      type: NODE_TYPE,
       data: inputVerdier,
-      label: inputVerdier.navn.value || "Ny sone",
-      icon: "pi pi-fw pi-box",
+      label: inputVerdier.navn.value || DEFAULT_LABEL,
+      icon: treeMenuConstants[NODE_TYPE].icon,
       parent: activeProjectId,
       children: [],
     };
 
-    delete newSone.data.navn;
     console.log("newSone:", newSone);
-
-    dispatch(add({ targetKey: newSone.parent, nodesToAdd: [newSone] }));
+    dispatch(addNode({ targetKey: newSone.parent, nodesToAdd: [newSone] }));
     setInputVerdier(structuredClone(initialState));
   };
 
@@ -155,67 +170,26 @@ const ProjectInput = () => {
     );
   };
 
-  /**
-   * Dropdown component for selecting normalized values.
-   * @component
-   * @param {Object} props.field - The field object.
-   * @param {number} props.index - The index of the field.
-   * @returns {JSX.Element}
-   */
-  const NormerteVerdierDropdown = ({ field, index }) => {
-    return (
-      <Dropdown
-        show={openDropdown === `dropdown-${index}`}
-        onToggle={() => toggleDropdown(`dropdown-${index}`)}
-      >
-        <Dropdown.Toggle
-          variant="light"
-          size="sm"
-          id={`dropdown-${index}`}
-          drop="down-centered"
-        ></Dropdown.Toggle>
-
-        <Dropdown.Menu className="p-0 custom-dropdown-menu">
-          <div className="custom-dropdown-table">
-            <div className="dropdown-header">
-              <div className="value-column">Verdi</div>
-              <div className="description-column">Beskrivelse</div>
-            </div>
-            {field.normertOptions.map((option, optionIndex) => (
-              <div
-                key={optionIndex}
-                className="dropdown-row"
-                onClick={() => handleInputChange(option.value, field.id, "value")}
-              >
-                <div className="value-column">{option.value}</div>
-                <div className="description-column">{option.description}</div>
-              </div>
-            ))}
-          </div>
-        </Dropdown.Menu>
-      </Dropdown>
-    );
-  };
-
+  //Display a table of input values
   return (
-    <div className="container mt-5">
+    <div className="container ">
       <div className="card">
         <form onSubmit={handleSubmit}>
           <div className="card-header card-form-header">
-            <h3 className="card-form-heading">{activeProject?.label || "Nytt Prosjekt"}</h3>
+            <h3 className="card-form-heading">{activeProject?.label || DEFAULT_LABEL}</h3>
             <button type="submit" className="btn btn-sm btn-success btn-submit mt-3">
               Lagre
             </button>
           </div>
           <div className="card-body">
-            <Table bordered hover size="sm" responsive>
+            <Table bordered hover size="sm" responsive="md">
               <thead>
                 {/* Overskrifter */}
                 <tr>
                   <th></th>
                   <th>Verdi</th>
                   <th>Normert</th>
-                  <th>Dokumentatasjon</th>
+                  <th>Kommentar</th>
                 </tr>
               </thead>
               <tbody>
@@ -243,7 +217,13 @@ const ProjectInput = () => {
                     {/* Normerte verdier fra NS3031 */}
                     <td className="col-1">
                       {Array.isArray(field.normertOptions) && (
-                        <NormerteVerdierDropdown field={field} index={index} />
+                        <TableDropdown
+                          field={field}
+                          index={index}
+                          openDropdown={openDropdown}
+                          setOpenDropdown={setOpenDropdown}
+                          handleInputChange={handleInputChange}
+                        />
                       )}
                     </td>
 
